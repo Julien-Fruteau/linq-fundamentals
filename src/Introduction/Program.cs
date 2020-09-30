@@ -7,8 +7,16 @@ namespace Introduction
     {
         static void Main(string[] args)
         {
-            string path = @"C:\Users\20012454\Downloads";
-            ShowLargeFilesWithoutLinq(path);
+            string rootPath;
+            if (OperatingSystem.isMacOS())
+            {
+                rootPath = @"/Users/julien/Downloads";
+            }
+            else
+            {
+                rootPath = @"C:\Users\20012454\Downloads";
+            }
+            ShowLargeFilesWithoutLinq(rootPath);
         }
 
         private static void ShowLargeFilesWithoutLinq(string path)
