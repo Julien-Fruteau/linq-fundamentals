@@ -8,6 +8,28 @@ namespace Features
     {
         static void Main(string[] args)
         {
+            // Func indicates lambda definition
+            // takes an int and return an int
+            Func<int, int> square = x => x * x;
+            Console.WriteLine(square(3));
+
+            Console.WriteLine("**********");
+            Func<int, int, int> add = (x, y) => x + y;
+            Console.WriteLine(add(3, 4));
+
+            Console.WriteLine("**********");
+            Func<int, int, int> add2 = (x, y) => 
+            {
+                int temp = x + y;
+                return temp;
+            };
+            Console.WriteLine("**********");
+
+            // returns void
+            Action<int> write = x => Console.WriteLine(x);
+            write(999);
+            Console.WriteLine("**********");
+
             IEnumerable<Employee> developers = new Employee[]
             {
                 new Employee {Id = 1, Name = "Julien"},
