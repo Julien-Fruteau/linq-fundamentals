@@ -13,6 +13,8 @@ namespace Features
                 new Employee {Id = 2, Name = "Bibi"}
             };
 
+            Console.WriteLine(developers.MyCount());
+
             IEnumerable<Employee> sales = new List<Employee>()
             {
                 new Employee {Id = 3, Name = "Lulu"}
