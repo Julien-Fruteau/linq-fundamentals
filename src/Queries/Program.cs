@@ -25,9 +25,13 @@ namespace Queries
             Console.WriteLine("*************");
 
             var query2 = movies.Filter(m => m.Year > 2000);
-            foreach (var movie in query2)
+            var enumerator = query2.GetEnumerator();
+
+            System.Console.WriteLine(query2.Count());
+            
+            while (enumerator.MoveNext())
             {
-                Console.WriteLine(movie.Title);
+                Console.WriteLine(enumerator.Current.Title);
             }
         }
     }

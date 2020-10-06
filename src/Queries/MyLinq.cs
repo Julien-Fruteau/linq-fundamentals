@@ -11,7 +11,7 @@ namespace Queries
             foreach (var item in source)
             {
                 if (predicate(item))
-                    yield return item;
+                    yield return item;  
             }
         }
     }
