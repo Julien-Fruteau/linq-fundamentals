@@ -24,11 +24,9 @@ namespace Queries
 
             Console.WriteLine("*************");
 
-            var query2 = movies.Filter(m => m.Year > 2000).ToList();
+            var query2 = movies.Filter(m => m.Year > 2000);
             var enumerator = query2.GetEnumerator();
 
-            System.Console.WriteLine(query2.Count());
-            
             while (enumerator.MoveNext())
             {
                 Console.WriteLine(enumerator.Current.Title);
