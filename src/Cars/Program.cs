@@ -28,6 +28,10 @@ namespace Cars
             {
                 System.Console.WriteLine($"{car.Manufacturer.PadRight(10)} {car.Name.PadRight(30)} : {car.Combined}");
             }
+
+            var anyFord = cars.Any(c => c.Manufacturer == "Ford");
+            var allFord = cars.All(c => c.Manufacturer == "Ford");
+            System.Console.WriteLine($"Any Ford : {anyFord} Vs All are Ford : {allFord}");
         }
 
         private static List<Car> ProcessFile(string path)
