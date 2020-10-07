@@ -18,11 +18,10 @@ namespace Cars
 
         private static List<Car> ProcessFile(string path)
         {
-            return File.ReadAllLines(path)
-                .Skip(1)
-                .Where(l => l.Length > 1)
-                .Select(Car.ParseFromCsv)
-                .ToList();
+            var query = from line in File.ReadAllLines(path).Skip(1)
+                        where line.Length > 1
+                        select Car.ParseFromCsv(line);
+            return query.ToList();
         }
     }
 }
