@@ -14,7 +14,11 @@ namespace Cars
             var query = from car in cars
                         where car.Manufacturer == "BMW" && car.Year == 2016
                         orderby car.Combined descending, car.Name
-                        select car;
+                        select new {
+                            car.Manufacturer,
+                            car.Combined,
+                            car.Name
+                        };
             var last = query.LastOrDefault();
 
             var top = cars.Where(c => c.Manufacturer == "BMW" && c.Year == 2016)
