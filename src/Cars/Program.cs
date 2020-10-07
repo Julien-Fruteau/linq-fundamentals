@@ -36,6 +36,12 @@ namespace Cars
             var anyFord = cars.Any(c => c.Manufacturer == "Ford");
             var allFord = cars.All(c => c.Manufacturer == "Ford");
             System.Console.WriteLine($"Any Ford : {anyFord} Vs All are Ford : {allFord}");
+
+            var characters = query.SelectMany(c => c.Name).OrderBy(c => c);
+            foreach (var c in characters)
+            {
+                System.Console.WriteLine(c);
+            }
         }
 
         private static List<Car> ProcessFile(string path)
