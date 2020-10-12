@@ -13,12 +13,14 @@ namespace Cars
             var manufacturers = ProcessManufacturers("src/Cars/manufacturers.csv");
 
             var query = from car in cars
-                        where car.Manufacturer == "BMW" && car.Year == 2016
+                        join manufacturer in manufacturers
+                            on car.Manufacturer equals manufacturer.Name
                         orderby car.Combined descending, car.Name
                         select new {
                             car.Manufacturer,
-                            car.Combined,
-                            car.Name
+                            manufacturer.Headquarters,
+                            car.Name,
+                            car.Combined
                         };
             var last = query.LastOrDefault();
 
