@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Globalization;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +22,20 @@ namespace Cars
                             car.Name,
                             car.Combined
                         };
+            
+            var q2 = cars.Join(manufacturers, 
+                                c => c.Manufacturer, 
+                                m => m.Name,
+                                (c, m) => new
+                                {
+                                    c.Manufacturer,
+                                    m.Headquarters,
+                                    c.Name,
+                                    c.Combined
+                                })
+                            .OrderByDescending(c => c.Combined)
+                            .ThenBy(c => c.Name);
+
             var last = query.LastOrDefault();
 
             var top = cars.Where(c => c.Manufacturer == "BMW" && c.Year == 2016)
@@ -36,15 +50,20 @@ namespace Cars
                 System.Console.WriteLine($"{car.Manufacturer.PadRight(10)} {car.Name.PadRight(30)} : {car.Combined}");
             }
 
-            var anyFord = cars.Any(c => c.Manufacturer == "Ford");
-            var allFord = cars.All(c => c.Manufacturer == "Ford");
-            System.Console.WriteLine($"Any Ford : {anyFord} Vs All are Ford : {allFord}");
-
-            var characters = query.SelectMany(c => c.Name).OrderBy(c => c);
-            foreach (var c in characters)
+            foreach (var q in q2.Take(10))
             {
-                System.Console.WriteLine(c);
+                System.Console.WriteLine($"{q.Manufacturer.PadRight(10)} {q.Name.PadRight(30)} : {q.Combined}");
             }
+
+            // var anyFord = cars.Any(c => c.Manufacturer == "Ford");
+            // var allFord = cars.All(c => c.Manufacturer == "Ford");
+            // System.Console.WriteLine($"Any Ford : {anyFord} Vs All are Ford : {allFord}");
+
+            // var characters = query.SelectMany(c => c.Name).OrderBy(c => c);
+            // foreach (var c in characters)
+            // {
+            //     System.Console.WriteLine(c);
+            // }
         }
 
         private static List<Manufacturer> ProcessManufacturers(string path)
@@ -87,7 +106,7 @@ namespace Cars
                     Year = int.Parse(columns[0]),
                     Manufacturer = columns[1],
                     Name = columns[2],
-                    Displacement = double.Parse(columns[3]),
+                    Displacement = double.Parse(columns[3], CultureInfo.InvariantCulture),
                     Cylinders = int.Parse(columns[4]),
                     City = int.Parse(columns[5]),
                     Highway = int.Parse(columns[6]),
