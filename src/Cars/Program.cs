@@ -12,59 +12,14 @@ namespace Cars
             var cars = ProcessCars("src/Cars/fuel.csv");
             var manufacturers = ProcessManufacturers("src/Cars/manufacturers.csv");
 
-            var query = from car in cars
-                        join manufacturer in manufacturers
-                            on new { car.Manufacturer, car.Year } equals
-                            new { Manufacturer = manufacturer.Name, manufacturer.Year }
-                        orderby car.Combined descending, car.Name
-                        select new {
-                            car.Manufacturer,
-                            manufacturer.Headquarters,
-                            car.Name,
-                            car.Combined
-                        };
+            var group = from car in cars
+                        group car by car.Manufacturer;
 
-            var q2 = cars.Join(manufacturers,
-                                c => new { c.Manufacturer, c.Year },
-                                m => new { Manufacturer = m.Name, m.Year },
-                                (c, m) => new
-                                {
-                                    c.Manufacturer,
-                                    m.Headquarters,
-                                    c.Name,
-                                    c.Combined
-                                })
-                            .OrderByDescending(c => c.Combined)
-                            .ThenBy(c => c.Name);
-
-            var last = query.LastOrDefault();
-
-            var top = cars.Where(c => c.Manufacturer == "BMW" && c.Year == 2016)
-                            .OrderByDescending(c => c.Combined)
-                            .ThenBy(c => c.Name)
-                            .First();
-
-            System.Console.WriteLine($"top : {top.Name} Vs last : {last.Name}");
-
-            foreach (var car in query.Take(10))
+            foreach (var g in group)
             {
-                System.Console.WriteLine($"{car.Manufacturer.PadRight(10)} {car.Name.PadRight(30)} : {car.Combined}");
+                System.Console.WriteLine($"{g.Key.PadRight(10)} : {g.Count()} cars");
             }
 
-            foreach (var q in q2.Take(10))
-            {
-                System.Console.WriteLine($"{q.Manufacturer.PadRight(10)} {q.Name.PadRight(30)} : {q.Combined}");
-            }
-
-            // var anyFord = cars.Any(c => c.Manufacturer == "Ford");
-            // var allFord = cars.All(c => c.Manufacturer == "Ford");
-            // System.Console.WriteLine($"Any Ford : {anyFord} Vs All are Ford : {allFord}");
-
-            // var characters = query.SelectMany(c => c.Name).OrderBy(c => c);
-            // foreach (var c in characters)
-            // {
-            //     System.Console.WriteLine(c);
-            // }
         }
 
         private static List<Manufacturer> ProcessManufacturers(string path)
