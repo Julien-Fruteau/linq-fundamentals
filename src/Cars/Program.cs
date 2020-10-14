@@ -17,7 +17,10 @@ namespace Cars
                         orderby manufacturer.Key
                         select manufacturer;
 
-            foreach (var g in group)
+            var g2 = cars.GroupBy(c => c.Manufacturer.ToUpper())
+                         .OrderBy(g => g.Key);
+
+            foreach (var g in g2)
             {
                 System.Console.WriteLine($"{g.Key} : {g.Count()} cars");
                 foreach (var car in g.OrderByDescending(c => c.Combined).Take(2))
