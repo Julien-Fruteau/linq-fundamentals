@@ -25,8 +25,8 @@ namespace Cars
                         };
 
             var q2 = cars.Join(manufacturers,
-                                c => c.Manufacturer,
-                                m => m.Name,
+                                c => new { c.Manufacturer, c.Year },
+                                m => new { Manufacturer = m.Name, m.Year },
                                 (c, m) => new
                                 {
                                     c.Manufacturer,
