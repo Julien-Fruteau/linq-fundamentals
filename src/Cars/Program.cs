@@ -13,44 +13,24 @@ namespace Cars
             var manufacturers = ProcessManufacturers("src/Cars/manufacturers.csv");
 
             var query =
-                cars.Join(manufacturers, c => c.Manufacturer, m => m.Name, (c, m) =>
-                    new {
-                        c.Manufacturer,
-                        m.Headquarters,
-                        c.Combined,
-                        c.Name
-                    })
-                .GroupBy(m => m.Headquarters)
-                .OrderBy(g => g.Key);
-
-            foreach (var country in query)
-            {
-                System.Console.WriteLine(country.Key);
-                foreach (var car in country.OrderByDescending(c => c.Combined).Take(3))
-                {
-                    System.Console.WriteLine($"\t{car.Name} : {car.Combined}");
-                }
-            }
-
-            System.Console.WriteLine("**********************");
-
-            var q2 =
-                from manufacturer in manufacturers
-                join car in cars on manufacturer.Name equals car.Manufacturer into carGroup
+                from car in cars
+                group car by car.Manufacturer into carGroup
                 select new
                 {
-                    Manufacturer = manufacturer,
-                    Cars = carGroup
+                    Name = carGroup.Key,
+                    Max = carGroup.Max(c => c.Combined),
+                    Min = carGroup.Min(c => c.Combined),
+                    Avg = carGroup.Average(c => c.Combined)
                 } into result
-                group result by result.Manufacturer.Headquarters;
+                orderby result.Max descending
+                select result;
 
-            foreach (var g in q2)
+            foreach (var result in query)
             {
-                System.Console.WriteLine(g.Key);
-                foreach (var car in g.SelectMany(c => c.Cars).OrderByDescending(c => c.Combined).Take(3))
-                {
-                    System.Console.WriteLine($"\t{car.Name} : {car.Combined}");
-                }
+                System.Console.WriteLine(result.Name);
+                System.Console.WriteLine($"\tMax : {result.Max}");
+                System.Console.WriteLine($"\tMin : {result.Min}");
+                System.Console.WriteLine($"\tAvg : {result.Avg}");
             }
         }
 
