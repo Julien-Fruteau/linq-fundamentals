@@ -14,7 +14,8 @@ namespace Cars
 
             var query = from car in cars
                         join manufacturer in manufacturers
-                            on car.Manufacturer equals manufacturer.Name
+                            on new { car.Manufacturer, car.Year } equals
+                            new { Manufacturer = manufacturer.Name, manufacturer.Year }
                         orderby car.Combined descending, car.Name
                         select new {
                             car.Manufacturer,
@@ -22,9 +23,9 @@ namespace Cars
                             car.Name,
                             car.Combined
                         };
-            
-            var q2 = cars.Join(manufacturers, 
-                                c => c.Manufacturer, 
+
+            var q2 = cars.Join(manufacturers,
+                                c => c.Manufacturer,
                                 m => m.Name,
                                 (c, m) => new
                                 {
