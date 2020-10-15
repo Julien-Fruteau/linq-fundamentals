@@ -11,11 +11,16 @@ namespace Cars
     {
         static void Main(string[] args)
         {
+            CreateXml();
+        }
+
+        private static void CreateXml()
+        {
             var records = ProcessCars("src/Cars/fuel.csv");
             var document = new XDocument();
             var cars = new XElement("Cars",
                     from record in records
-                    select  new XElement("Car",
+                    select new XElement("Car",
                             new XAttribute("Name", record.Name),
                             new XAttribute("Combined", record.Combined),
                             new XAttribute("Manufacturer", record.Manufacturer)));
