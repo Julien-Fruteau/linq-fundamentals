@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System;
 
 namespace Cars
 {
@@ -24,6 +25,23 @@ namespace Cars
                 } into result
                 orderby result.Max descending
                 select result;
+
+            var q2 =
+                cars.GroupBy(c => c.Manufacturer)
+                    .Select(g =>
+                        {
+                            var results = g.Aggregate(new CarStatistics(),
+                                                      (acc, c) => acc.Accumulate(c),
+                                                      acc => acc.Compute());
+                            return new
+                            {
+                                Name = g.Key,
+                                Avg = results.Avg,
+                                Min = results.Min,
+                                Max = results.Max
+                            };
+                        })
+                    .OrderByDescending( r => r.Max);
 
             foreach (var result in query)
             {
@@ -59,6 +77,36 @@ namespace Cars
                         .ToCar();
 
             return query.ToList();
+        }
+    }
+
+
+    public class CarStatistics
+    {
+        public int Max { get; set; }
+        public int Min { get; set; }
+        public double Avg { get; set; }
+        public int Total { get; set; }
+        public int Count { get; set; }
+
+        public CarStatistics()
+        {
+            Max = Int32.MinValue;
+            Min = Int32.MaxValue;
+        }
+        public CarStatistics Accumulate(Car c)
+        {
+            Total += c.Combined;
+            Count += 1;
+            Max = Math.Max(Max, c.Combined);
+            Min = Math.Min(Min, c.Combined);
+            return this;
+        }
+
+        public CarStatistics Compute()
+        {
+            Avg = Total / Count;
+            return this;
         }
     }
 
