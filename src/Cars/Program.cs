@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System;
+using System.Xml.Linq;
 
 namespace Cars
 {
@@ -10,46 +11,20 @@ namespace Cars
     {
         static void Main(string[] args)
         {
-            var cars = ProcessCars("src/Cars/fuel.csv");
-            var manufacturers = ProcessManufacturers("src/Cars/manufacturers.csv");
-
-            var query =
-                from car in cars
-                group car by car.Manufacturer into carGroup
-                select new
-                {
-                    Name = carGroup.Key,
-                    Max = carGroup.Max(c => c.Combined),
-                    Min = carGroup.Min(c => c.Combined),
-                    Avg = carGroup.Average(c => c.Combined)
-                } into result
-                orderby result.Max descending
-                select result;
-
-            var q2 =
-                cars.GroupBy(c => c.Manufacturer)
-                    .Select(g =>
-                        {
-                            var results = g.Aggregate(new CarStatistics(),
-                                                      (acc, c) => acc.Accumulate(c),
-                                                      acc => acc.Compute());
-                            return new
-                            {
-                                Name = g.Key,
-                                Avg = results.Avg,
-                                Min = results.Min,
-                                Max = results.Max
-                            };
-                        })
-                    .OrderByDescending( r => r.Max);
-
-            foreach (var result in query)
+            var records = ProcessCars("src/Cars/fuel.csv");
+            var document = new XDocument();
+            var cars = new XElement("Cars");
+            foreach (var record in records)
             {
-                System.Console.WriteLine(result.Name);
-                System.Console.WriteLine($"\tMax : {result.Max}");
-                System.Console.WriteLine($"\tMin : {result.Min}");
-                System.Console.WriteLine($"\tAvg : {result.Avg}");
+                var car = new XElement("Car");
+                var name = new XElement("Name", record.Name);
+                var combined = new XElement("Combined", record.Combined);
+                car.Add(name);
+                car.Add(combined);
+                cars.Add(car);
             }
+            document.Add(cars);
+            document.Save("src/Cars/fuel.xml");
         }
 
         private static List<Manufacturer> ProcessManufacturers(string path)
