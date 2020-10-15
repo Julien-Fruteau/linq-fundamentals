@@ -17,8 +17,8 @@ namespace Cars
             foreach (var record in records)
             {
                 var car = new XElement("Car");
-                var name = new XElement("Name", record.Name);
-                var combined = new XElement("Combined", record.Combined);
+                var name = new XAttribute("Name", record.Name);
+                var combined = new XAttribute("Combined", record.Combined);
                 car.Add(name);
                 car.Add(combined);
                 cars.Add(car);
