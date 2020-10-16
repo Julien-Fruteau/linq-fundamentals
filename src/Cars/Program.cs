@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System;
 using System.Xml.Linq;
+using System.Data.Entity;
+using Microsoft.Extensions.Configuration;
 
 namespace Cars
 {
@@ -11,8 +13,32 @@ namespace Cars
     {
         static void Main(string[] args)
         {
-            CreateXml();
-            QueryXml();
+            var builder = new ConfigurationBuilder().AddJsonFile("config/dbSettings.json");
+            var config = builder.Build();
+            System.Console.WriteLine(config["ConnectionString"]);
+            // Database.SetInitializer(new DropCreateDatabaseIfModelChanges<CarDb>());
+            // InsertData();
+            // QueryData();
+        }
+
+        private static void QueryData()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void InsertData(string connectionSring)
+        {
+            var cars = ProcessCars("src/Cars/fuel.csv");
+            // ConnectionString "Server=localhost;Database=CarDb;User Id=sa;Password=<PWD>;"
+            var db = new CarDb(connectionSring);
+            if (!db.Cars.Any())
+            {
+                foreach (var car in cars)
+                {
+                    db.Cars.Add(car);   // does not insert
+                }
+                db.SaveChanges();       // will insert lines in table
+            }
         }
 
         private static void QueryXml()
