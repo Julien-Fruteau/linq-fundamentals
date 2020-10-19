@@ -15,22 +15,33 @@ namespace Cars
         {
             var builder = new ConfigurationBuilder().AddJsonFile("config/dbSettings.json");
             var config = builder.Build();
-            System.Console.WriteLine(config["ConnectionString"]);
+            // System.Console.WriteLine(config["ConnectionString"]);
             // Database.SetInitializer(new DropCreateDatabaseIfModelChanges<CarDb>());
-            // InsertData();
-            // QueryData();
+            InsertData(config["ConnectionString"]);
+            QueryData(config["ConnectionString"]);
         }
 
-        private static void QueryData()
+        private static void QueryData(string ConnectionString)
         {
-            throw new NotImplementedException();
+            var db = new CarDb(ConnectionString);
+            db.Database.Log = System.Console.WriteLine;
+
+            var query =
+                from car in db.Cars
+                orderby car.Combined descending, car.Name ascending
+                select car;
+
+            foreach (var car in query.Take(10))
+            {
+                System.Console.WriteLine($"{car.Name}: {car.Combined}");
+            }
         }
 
-        private static void InsertData(string connectionSring)
+        private static void InsertData(string ConnectionString)
         {
             var cars = ProcessCars("src/Cars/fuel.csv");
             // ConnectionString "Server=localhost;Database=CarDb;User Id=sa;Password=<PWD>;"
-            var db = new CarDb(connectionSring);
+            var db = new CarDb(ConnectionString);
             if (!db.Cars.Any())
             {
                 foreach (var car in cars)
