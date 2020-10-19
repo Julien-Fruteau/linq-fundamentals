@@ -26,15 +26,26 @@ namespace Cars
             var db = new CarDb(ConnectionString);
             db.Database.Log = System.Console.WriteLine;
 
-            var query =
+           var query =
                 from car in db.Cars
-                orderby car.Combined descending, car.Name ascending
-                select car;
+                group car by car.Manufacturer.ToUpper() into manufacturer
+                select new {
+                    Name = manufacturer.Key,
+                    Cars =
+                        (from car in manufacturer
+                        orderby car.Combined descending
+                        select car).Take(2)
+                };
 
-            foreach (var car in query.Take(10))
+            foreach (var manufacturer in query)
             {
-                System.Console.WriteLine($"{car.Name}: {car.Combined}");
+                System.Console.WriteLine(manufacturer.Name);
+                foreach (var car in manufacturer.Cars)
+                {
+                    System.Console.WriteLine($"\t{car.Name}: {car.Combined}");
+                }
             }
+            
         }
 
         private static void InsertData(string ConnectionString)
